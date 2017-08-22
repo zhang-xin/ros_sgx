@@ -1,0 +1,12 @@
+<package>
+    <name>ros_sgx</name>
+    <version>0.0.1</version>
+    <description>Intel SGX SDK package for ROS</description>
+    <maintainer email="zhangxin.xa@gmail.com">Xin Zhang</maintainer>
+    <license>BSD</license>
+
+    <url>http://github.com/zhang-xin/ros_sgx</url>
+    <author email="zhangxin.xa@gmail.com">Xin Zhang</author>
+
+    <buildtool_depend>catkin</buildtool_depend>
+</package>
