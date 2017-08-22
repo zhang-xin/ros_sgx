@@ -1,0 +1,11 @@
+<package>
+    <name>ros_sgx_sample</name>
+    <version>0.0.0</version>
+    <description>ROS publisher/subscriber example</description>
+    <maintainer email="zhangxin.xa@gmail.com">Xin Zhang</maintainer>
+    <license>BSD</license>
+
+    <buildtool_depend>catkin</buildtool_depend>
+    <build_depend>roscpp</build_depend>
+    <run_depend>roscpp</run_depend>
+</package>
