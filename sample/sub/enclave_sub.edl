@@ -1,0 +1,9 @@
+enclave {
+
+    from "../../trusted_lib/trusted_lib.edl" import *;
+
+    trusted {
+        public int decrypt_msg([in, size=len] const uint8_t *data, size_t len);
+    };
+
+};

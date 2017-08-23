@@ -1,58 +1,47 @@
 #include "ros/ros.h"
-#include "std_msgs/String.h"
+#include "ros_sgx/sgxmsg.h"
+
+#include <vector>
+
+#include "untrusted_lib.h"
+#include "sgx_urts.h"
+#include "sgx_error.h"
+#include "sgx_eid.h"
+#include "enclave_sub_u.h"
+
+sgx_enclave_id_t sgx_eid = 0;
 
 /**
  * This tutorial demonstrates simple receipt of messages over the ROS system.
  */
-void chatterCallback(const std_msgs::String::ConstPtr& msg)
+void chatterCallback(const ros_sgx::sgxmsg::ConstPtr& msg)
 {
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
+    sgx_status_t sgx_ret = SGX_ERROR_UNEXPECTED;
+    int enclave_ret = -1;
+
+    sgx_ret = decrypt_msg(sgx_eid, &enclave_ret, &msg->sealed_data[0], msg->sealed_data.size());
+    if (sgx_ret || enclave_ret)
+        ROS_FATAL("cannot decrypt message");
 }
 
 int main(int argc, char **argv)
 {
-  /**
-   * The ros::init() function needs to see argc and argv so that it can perform
-   * any ROS arguments and name remapping that were provided at the command line.
-   * For programmatic remappings you can use a different version of init() which takes
-   * remappings directly, but for most command-line programs, passing argc and argv is
-   * the easiest way to do it.  The third argument to init() is the name of the node.
-   *
-   * You must call one of the versions of ros::init() before using any other
-   * part of the ROS system.
-   */
-  ros::init(argc, argv, "listener");
+    ros::init(argc, argv, "listener");
+    ros::NodeHandle n;
 
-  /**
-   * NodeHandle is the main access point to communications with the ROS system.
-   * The first NodeHandle constructed will fully initialize this node, and the last
-   * NodeHandle destructed will close down the node.
-   */
-  ros::NodeHandle n;
+    if (0 != load_enclave(&sgx_eid, "enclave_sub.signed.so")) {
+        ROS_FATAL("load enclave failed.");
+        return EXIT_FAILURE;
+    }
 
-  /**
-   * The subscribe() call is how you tell ROS that you want to receive messages
-   * on a given topic.  This invokes a call to the ROS
-   * master node, which keeps a registry of who is publishing and who
-   * is subscribing.  Messages are passed to a callback function, here
-   * called chatterCallback.  subscribe() returns a Subscriber object that you
-   * must hold on to until you want to unsubscribe.  When all copies of the Subscriber
-   * object go out of scope, this callback will automatically be unsubscribed from
-   * this topic.
-   *
-   * The second parameter to the subscribe() function is the size of the message
-   * queue.  If messages are arriving faster than they are being processed, this
-   * is the number of messages that will be buffered up before beginning to throw
-   * away the oldest ones.
-   */
-  ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
+    std::vector<uint8_t> buffer;
+    set_unsealed_data_buf(buffer);
 
-  /**
-   * ros::spin() will enter a loop, pumping callbacks.  With this version, all
-   * callbacks will be called from within this thread (the main one).  ros::spin()
-   * will exit when Ctrl-C is pressed, or the node is shutdown by the master.
-   */
-  ros::spin();
+    ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
 
-  return 0;
+    ros::spin();
+
+    unload_enclave(&sgx_eid);
+
+    return 0;
 }

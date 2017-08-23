@@ -1,0 +1,9 @@
+enclave {
+
+    from "../../trusted_lib/trusted_lib.edl" import *;
+
+    trusted {
+        public int gen_msg(int count);
+    };
+
+};

@@ -1,0 +1,21 @@
+enclave {
+
+    trusted {
+        public uint32_t ecall_seal_data([in, size=data_len] const uint8_t *data,
+                                        size_t data_len,
+                                        [user_check] const uint8_t *aad,
+                                        size_t aad_len);
+        public uint32_t ecall_unseal_data([in, size=data_len] const uint8_t *sealed_data,
+                                          size_t data_len,
+                                          [user_check] uint8_t *aad,
+                                          [user_check] size_t *aad_len);
+    };
+
+    untrusted {
+        void ocall_get_sealed_data([in, size=len] const uint8_t *sealed_data, size_t len);
+        void ocall_get_unsealed_data([in, size=len] const uint8_t *unsealed_data, size_t len);
+
+        void ocall_print_string([in, string] const char *str);
+    };
+
+};
