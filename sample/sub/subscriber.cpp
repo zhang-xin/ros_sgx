@@ -11,9 +11,6 @@
 
 sgx_enclave_id_t sgx_eid = 0;
 
-/**
- * This tutorial demonstrates simple receipt of messages over the ROS system.
- */
 void chatterCallback(const ros_sgx::sgxmsg::ConstPtr& msg)
 {
     sgx_status_t sgx_ret = SGX_ERROR_UNEXPECTED;
@@ -33,9 +30,6 @@ int main(int argc, char **argv)
         ROS_FATAL("load enclave failed.");
         return EXIT_FAILURE;
     }
-
-    std::vector<uint8_t> buffer;
-    set_unsealed_data_buf(buffer);
 
     ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
 

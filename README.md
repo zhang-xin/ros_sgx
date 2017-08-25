@@ -63,3 +63,14 @@ add_untrusted_library(target
                       EDL_SEARCH_PATHS path1 path2 ...)
 ```
 
+## Trusted/untrusted library for sealing/unsealing msg
+
+A pair of helper library is provided for encrypt messages. Developer can use provided functions to encrypt messages with SGX SDK seal operation, then the encrypted message could be passed with original roscpp, athe the subscriber the message could be decrypted in enclave. A new SGX msg format is provided in ros_sgx package. The message is generated/consumed in both sides of pub/sub so it's never plaintext outside enclaves.
+
+The message format is controlled by the developer, what the provided library operates is just a buffer.
+
+Currently only single machine message passing is supported because SGX seal/unseal should be using the same CPU.
+
+## Sample
+
+A sample is provided for demonstrating the ros_sgx package and helper library usage.

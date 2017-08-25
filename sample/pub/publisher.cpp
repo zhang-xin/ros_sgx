@@ -9,9 +9,6 @@
 #include "sgx_eid.h"
 #include "enclave_pub_u.h"
 
-/**
- * This tutorial demonstrates simple sending of messages over the ROS system.
- */
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "talker");
